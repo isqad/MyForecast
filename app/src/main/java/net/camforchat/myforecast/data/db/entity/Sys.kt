@@ -1,4 +1,4 @@
-package net.camforchat.myforecast.data.response
+package net.camforchat.myforecast.data.db.entity
 
 data class Sys(
     val country: String,

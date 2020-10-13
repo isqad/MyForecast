@@ -1,21 +1,23 @@
 package net.camforchat.myforecast.ui.weather.current
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-
-import net.camforchat.myforecast.R
-import net.camforchat.myforecast.data.OpenWeatherMapAPIService
-
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.current_weather_fragment.*
 
-class CurrentWeatherFragment : Fragment() {
+import net.camforchat.myforecast.R
+import net.camforchat.myforecast.ui.base.ScopedFragment
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.x.closestKodein
+import org.kodein.di.generic.instance
+
+class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
+    override val kodein by closestKodein()
+    private val viewModelFactory: CurrentWeatherViewModelFactory by instance()
+
     private lateinit var viewModel: CurrentWeatherViewModel
 
     override fun onCreateView(
@@ -27,16 +29,25 @@ class CurrentWeatherFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(CurrentWeatherViewModel::class.java)
-        // TODO: Use the ViewModel
+        viewModel = ViewModelProvider(this, viewModelFactory).get(CurrentWeatherViewModel::class.java)
 
-        val apiService = OpenWeatherMapAPIService()
+        bindUI()
+        /**
+        val connectivityInterceptor = ConnectivityInterceptorImpl(requireContext())
+        val apiService = OpenWeatherMapAPIService(connectivityInterceptor)
 
         GlobalScope.launch(Dispatchers.Main) {
             val currentWeatherResponse = apiService.getCurrentWeather("Ekaterinburg")
 
             textView.text = currentWeatherResponse.main.temp.toString()
         }
+        **/
+    }
+
+    private fun bindUI() {
+        viewModel.weather.observe(viewLifecycleOwner, Observer {
+            textView.text = it.toString()
+        })
     }
 
 }

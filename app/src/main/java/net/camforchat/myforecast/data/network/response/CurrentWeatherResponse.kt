@@ -1,6 +1,7 @@
-package net.camforchat.myforecast.data.response
+package net.camforchat.myforecast.data.network.response
 
 import com.google.gson.annotations.SerializedName
+import net.camforchat.myforecast.data.db.entity.*
 
 data class CurrentWeatherResponse(
     val base: String,
