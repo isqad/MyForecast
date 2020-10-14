@@ -32,22 +32,13 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
         viewModel = ViewModelProvider(this, viewModelFactory).get(CurrentWeatherViewModel::class.java)
 
         bindUI()
-        /**
-        val connectivityInterceptor = ConnectivityInterceptorImpl(requireContext())
-        val apiService = OpenWeatherMapAPIService(connectivityInterceptor)
-
-        GlobalScope.launch(Dispatchers.Main) {
-            val currentWeatherResponse = apiService.getCurrentWeather("Ekaterinburg")
-
-            textView.text = currentWeatherResponse.main.temp.toString()
-        }
-        **/
     }
 
     private fun bindUI() {
         viewModel.weather.observe(viewLifecycleOwner, Observer {
+            if (it == null) return@Observer
+
             textView.text = it.toString()
         })
     }
-
 }
